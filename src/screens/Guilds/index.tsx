@@ -12,14 +12,13 @@ type Props = {
 }
 
 export default function Guilds({ handleGuildSelect }: Props) {
-  const guilds = [
-    {
-      id: '1',
+  const guilds = ['1', '2', '3', '4', '5', '6', '7', '8']
+    .map(id => ({
+      id,
       name: 'Lendários',
       icon: 'image.png',
       owner: true,
-    },
-  ];
+    }));
 
   return (
     <View style={styles.container}>
@@ -33,7 +32,9 @@ export default function Guilds({ handleGuildSelect }: Props) {
           />
         )}
         showsVerticalScrollIndicator={false}
-        ItemSeparatorComponent={() => <ListDivider />}
+        ItemSeparatorComponent={() => <ListDivider isCentered />}
+        contentContainerStyle={{ paddingBottom: 69, paddingTop: 103 }}
+        ListHeaderComponent={<ListDivider isCentered />}
         style={styles.guilds}
       />
     </View>

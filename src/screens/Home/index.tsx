@@ -13,9 +13,9 @@ import { useNavigation } from '@react-navigation/native';
 export function Home() {
   const [category, setCategory] = useState('');
   const navigation = useNavigation();
-  const appointments = [
-    {
-      id: '1',
+  const appointments = ['1', '2']
+    .map(id => ({
+      id,
       guild: {
         id: '1',
         name: 'Lendários',
@@ -25,20 +25,7 @@ export function Home() {
       category: '1',
       date: '22/06 às 20:40h',
       description: 'É hoje que vamos chegar ao challenger sem perder uma partida da md10'
-    },
-    {
-      id: '2',
-      guild: {
-        id: '2',
-        name: 'Lendários',
-        icon: null,
-        owner: true,
-      },
-      category: '1',
-      date: '22/06 às 20:40h',
-      description: 'É hoje que vamos chegar ao challenger sem perder uma partida da md10'
-    }
-  ];
+    }));
 
   function handleCategorySelect(categoryId: string) {
     categoryId === category ? setCategory('') : setCategory(categoryId);
@@ -64,26 +51,25 @@ export function Home() {
         setCategory={handleCategorySelect}
       />
 
-      <View style={styles.content}>
-        <ListHeader
-          title="Partidas agendadas"
-          subtitle="Total 6"
-        />
+      <ListHeader
+        title="Partidas agendadas"
+        subtitle="Total 6"
+      />
 
-        <FlatList
-          data={appointments}
-          keyExtractor={item => item.id}
-          renderItem={({ item }) => (
-            <Appointment
-              data={item}
-              onPress={handleAppointmentDetails}
-            />
-          )}
-          style={styles.matches}
-          showsVerticalScrollIndicator={false}
-          ItemSeparatorComponent={() => <ListDivider />}
-        />
-      </View>
+      <FlatList
+        data={appointments}
+        keyExtractor={item => item.id}
+        renderItem={({ item }) => (
+          <Appointment
+            data={item}
+            onPress={handleAppointmentDetails}
+          />
+        )}
+        contentContainerStyle={{ paddingBottom: 69 }}
+        style={styles.matches}
+        showsVerticalScrollIndicator={false}
+        ItemSeparatorComponent={() => <ListDivider />}
+      />
     </Background>
   )
 }
