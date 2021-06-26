@@ -20,11 +20,22 @@ import Guilds from '../Guilds';
 import { GuildProps } from '../../components/Guild';
 import { GuildIcon } from '../../components/GuildIcon';
 import { Background } from '../../components/Background';
+import uuid from 'react-native-uuid';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { COLLECTION_APPOINTMENTS } from '../../configs/database';
+import { useNavigation } from '@react-navigation/native';
 
 export function AppointmentCreate() {
   const [category, setCategory] = useState('');
   const [openGuildsModal, setOpenGuildsModal] = useState(false);
   const [guild, setGuild] = useState<GuildProps>({} as GuildProps);
+
+  const [day, setDay] = useState('');
+  const [month, setMonth] = useState('');
+  const [hour, setHour] = useState('');
+  const [minute, setMinute] = useState('');
+  const [description, setDescription] = useState('');
+  const navigation = useNavigation();
 
   function handleCloseGuilds() {
     setOpenGuildsModal(false);
@@ -41,6 +52,23 @@ export function AppointmentCreate() {
 
   function handleCategorySelect(categoryId: string) {
     setCategory(categoryId);
+  }
+
+  async function handleSave() {
+    const newAppointment = {
+      id: uuid.v4(),
+      guild,
+      category,
+      date: `${day}/${month} às ${hour}:${minute}h`,
+      description
+    };
+
+    const storage = await AsyncStorage.getItem(COLLECTION_APPOINTMENTS);
+    const appointments = storage ? JSON.parse(storage) : [];
+
+    await AsyncStorage.setItem(COLLECTION_APPOINTMENTS, JSON.stringify([...appointments, newAppointment]));
+
+    navigation.navigate('Home');
   }
 
   return (
@@ -73,7 +101,7 @@ export function AppointmentCreate() {
             <RectButton onPress={handleOpenGuilds}>
               <View style={styles.select}>
                 {guild.icon ?
-                  <GuildIcon /> :
+                  <GuildIcon guildId={guild.id} iconId={guild.icon} /> :
                   <View style={styles.image} />}
 
                 <View style={styles.selectBody}>
@@ -96,9 +124,15 @@ export function AppointmentCreate() {
                   Dia e mês
                 </Text>
                 <View style={styles.column}>
-                  <SmallInput maxLength={2} />
+                  <SmallInput
+                    maxLength={2}
+                    onChangeText={setDay}
+                  />
                   <Text style={styles.divider}>/</Text>
-                  <SmallInput maxLength={2} />
+                  <SmallInput
+                    maxLength={2}
+                    onChangeText={setMonth}
+                  />
                 </View>
               </View>
 
@@ -107,9 +141,15 @@ export function AppointmentCreate() {
                   Hora e minuto
                 </Text>
                 <View style={styles.column}>
-                  <SmallInput maxLength={2} />
+                  <SmallInput
+                    maxLength={2}
+                    onChangeText={setHour}
+                  />
                   <Text style={styles.divider}>:</Text>
-                  <SmallInput maxLength={2} />
+                  <SmallInput
+                    maxLength={2}
+                    onChangeText={setMinute}
+                  />
                 </View>
               </View>
             </View>
@@ -129,10 +169,14 @@ export function AppointmentCreate() {
               maxLength={100}
               numberOfLines={5}
               autoCorrect={false}
+              onChangeText={setDescription}
             />
 
             <View style={styles.footer}>
-              <Button title="Agendar" />
+              <Button
+                title="Agendar"
+                onPress={handleSave}
+              />
             </View>
           </View>
         </ScrollView>
